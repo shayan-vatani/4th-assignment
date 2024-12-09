@@ -1,0 +1,319 @@
+#include <iostream>
+#include <array>
+#include <cmath>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+// Abstract base class representing a general Shape
+// Provides a common interface for all 2D and 3D shapes
+class Shape {
+protected:
+    string ShapeType; // Describes the type of shape (e.g., "2D_Circle", "3D_Cylinder")
+    array<double, 3> coordinates; // Center coordinates of the shape (x, y, z)
+
+public:
+    virtual ~Shape() {} // Virtual destructor for proper cleanup in derived classes
+
+    // Pure virtual functions to ensure all derived classes implement these methods
+    virtual void display() = 0;         // Display shape details
+    virtual double area() = 0;          // Calculate area (applicable to 2D shapes)
+    virtual double volume() = 0;        // Calculate volume (applicable to 3D shapes)
+    virtual double perimeter() = 0;     // Calculate perimeter (for 2D shapes)
+    virtual double surfaceArea() = 0;   // Calculate surface area (for 3D shapes)
+
+    // Getter for the ShapeType string
+    const string getShapeType() const { return ShapeType; }
+};
+
+// Circle class: A 2D shape with a radius
+class Circle : public Shape {
+private:
+    int radius;
+
+public:
+    Circle(double x = 0, double y = 0, int r = 0) {
+        ShapeType = "2D_Circle";
+        coordinates = {x, y, 0}; // z-coordinate is 0 since it's a 2D shape
+        radius = r;
+    }
+
+    ~Circle() {
+        cout << "Destroying Circle" << endl;
+    }
+
+    void display() override {
+        cout << "Shape type: " << ShapeType << " with center at (" << coordinates[0]
+             << "," << coordinates[1] << ") and radius: " << radius << endl;
+    }
+
+    double area() override {
+        return M_PI * radius * radius; // Area of a circle = πr²
+    }
+
+    double volume() override {
+        return 0; // Circle is 2D, so no volume
+    }
+
+    double perimeter() override {
+        return 2 * M_PI * radius; // Perimeter of a circle = 2πr
+    }
+
+    double surfaceArea() override {
+        return 0; // Circle is 2D, so no surface area
+    }
+};
+
+// Rectangle class: A 2D shape defined by length and width
+class Rectangle : public Shape {
+private:
+    int angle;       // Angle (default 90 degrees for rectangle)
+    double Length;   // Length of the rectangle
+    double Width;    // Width of the rectangle
+
+public:
+    Rectangle(double x = 0, double y = 0, double Length = 0, double Width = 0, int angle = 90) {
+        ShapeType = "2D_Rectangle";
+        coordinates = {x, y, 0}; // z-coordinate is 0 since it's a 2D shape
+        this->angle = angle;
+        this->Width = Width;
+        this->Length = Length;
+    }
+
+    ~Rectangle() {
+        cout << "Destroying Rectangle" << endl;
+    }
+
+    void display() override {
+        cout << "Shape type: " << ShapeType << " with center at (" << coordinates[0]
+             << "," << coordinates[1] << "), angle: " << angle
+             << ", Length: " << Length << ", Width: " << Width << endl;
+    }
+
+    double area() override {
+        return Width * Length; // Area of rectangle = length × width
+    }
+
+    double volume() override {
+        return 0; // Rectangle is 2D, so no volume
+    }
+
+    double perimeter() override {
+        return 2 * (Length + Width); // Perimeter of rectangle = 2(length + width)
+    }
+
+    double surfaceArea() override {
+        return 0; // Rectangle is 2D, so no surface area
+    }
+};
+
+// Triangle class: A 2D shape defined by a base and height
+class Triangle : public Shape {
+private:
+    double Length;  // Base length
+    double height;  // Height of the triangle
+
+public:
+    Triangle(double x = 0, double y = 0, double Length = 0, double height = 0) {
+        ShapeType = "2D_Triangle";
+        coordinates = {x, y, 0}; // z-coordinate is 0 since it's a 2D shape
+        this->Length = Length;
+        this->height = height;
+    }
+
+    ~Triangle() {
+        cout << "Destroying Triangle" << endl;
+    }
+
+    void display() override {
+        cout << "Shape type: " << ShapeType << " with center at (" << coordinates[0]
+             << "," << coordinates[1] << "), Length: " << Length << ", height: " << height << endl;
+    }
+
+    double area() override {
+        return (Length * height) / 2; // Area of triangle = ½ × base × height
+    }
+
+    double volume() override {
+        return 0; // Triangle is 2D, so no volume
+    }
+
+    double perimeter() override {
+        return 3 * Length; // Perimeter assumes an equilateral triangle
+    }
+
+    double surfaceArea() override {
+        return 0; // Triangle is 2D, so no surface area
+    }
+};
+
+// Sphere class: A 3D shape with a radius
+class Sphere : public Shape {
+private:
+    int radius;
+
+public:
+    Sphere(double x = 0, double y = 0, double z = 0, int radius = 0) {
+        ShapeType = "3D_Sphere";
+        coordinates = {x, y, z};
+        this->radius = radius;
+    }
+
+    ~Sphere() {
+        cout << "Destroying Sphere" << endl;
+    }
+
+    void display() override {
+        cout << "Shape type: " << ShapeType << " with center at (" << coordinates[0]
+             << "," << coordinates[1] << "," << coordinates[2] << ") and radius: " << radius << endl;
+    }
+
+    double area() override {
+        return 0; // Sphere doesn't have a 2D area
+    }
+
+    double volume() override {
+        return (4.0 / 3.0) * M_PI * pow(radius, 3); // Volume of sphere = 4/3 πr³
+    }
+
+    double perimeter() override {
+        return 0; // Sphere has no perimeter
+    }
+
+    double surfaceArea() override {
+        return 4 * M_PI * pow(radius, 2); // Surface area of sphere = 4πr²
+    }
+};
+
+// Priority queue template class
+// Manages the shapes based on their volume in a max-heap
+template<typename T>
+class priority_queue {
+private:
+    vector<T> container; // Vector to store the shapes
+
+    // Comparator for volume (higher volume gets higher priority)
+    bool compare(const T& a, const T& b) {
+        return a->volume() < b->volume();
+    }
+
+public:
+    // Add a shape to the queue
+    void add(const T& element) {
+        container.push_back(element);
+        shift_up(container.size() - 1); // Maintain heap property
+    }
+
+    // View the highest-priority element
+    const T& view() const {
+        if (container.empty()) {
+            throw runtime_error("Priority queue is empty.");
+        }
+        return container.front();
+    }
+
+    // Delete the highest-priority element
+    void deleteT() {
+        if (container.empty()) {
+            throw runtime_error("Priority queue is empty.");
+        }
+        swap(container.front(), container.back());
+        container.pop_back();
+        if (!container.empty()) {
+            heapify(0);
+        }
+    }
+
+    // Browse all shapes in the queue
+    void browse() {
+        for (const T& elem : container) {
+            elem->display();
+        }
+    }
+
+    // Destructor to clean up dynamically allocated memory
+    ~priority_queue() {
+        for (T& elem : container) {
+            delete elem;
+        }
+    }
+
+private:
+    // Helper to maintain heap property during insertion
+    void shift_up(int index) {
+        while (index > 0) {
+            int parent = (index - 1) / 2;
+            if (compare(container[parent], container[index])) {
+                swap(container[parent], container[index]);
+                index = parent;
+            } else {
+                break;
+            }
+        }
+    }
+
+    // Helper to maintain heap property during deletion
+    void heapify(int index) {
+        int size = container.size();
+        while (index < size) {
+            int left = 2 * index + 1;
+            int right = 2 * index + 2;
+            int largest = index;
+
+            if (left < size && compare(container[largest], container[left])) {
+                largest = left;
+            }
+            if (right < size && compare(container[largest], container[right])) {
+                largest = right;
+            }
+
+            if (largest != index) {
+                swap(container[index], container[largest]);
+                index = largest;
+            } else {
+                break;
+            }
+        }
+    }
+};
+
+
+int main() {
+    priority_queue<Shape*> pq;
+
+    // Add 2D shapes
+    pq.add(new Circle(1, 2, 4));              // Circle with radius 4
+    pq.add(new Rectangle(0, 0, 6, 4));        // Rectangle with length 6 and width 4
+    pq.add(new Triangle(0, 0, 5, 7));         // Triangle with base 5 and height 7
+    pq.add(new Circle(3, 4, 2));              // Circle with radius 2
+    pq.add(new Rectangle(1, 1, 8, 3));        // Rectangle with length 8 and width 3
+
+    // Add 3D shapes
+    pq.add(new Sphere(0, 0, 0, 5));           // Sphere with radius 5
+    pq.add(new Cuboid(1, 1, 1, 4, 5, 6));     // Cuboid with dimensions 4x5x6
+    pq.add(new Cylinder(0, 0, 0, 3, 7));      // Cylinder with radius 3 and height 7
+    pq.add(new Sphere(2, 2, 2, 7));           // Sphere with radius 7
+    pq.add(new Cuboid(0, 0, 0, 3, 3, 3));     // Cuboid with dimensions 3x3x3
+
+    // Browse all objects
+    std::cout << "All shapes in the priority queue:\n";
+    pq.browse();
+
+    // View the highest-priority shape
+    std::cout << "\nHighest-priority shape:\n";
+    pq.view()->display();
+
+    // Delete the highest-priority shape
+    std::cout << "\nDeleting the highest-priority shape...\n";
+    pq.deleteT();
+
+    // Browse all objects again
+    std::cout << "\nAfter deleting the highest-priority shape:\n";
+    pq.browse();
+
+    // View the new highest-priority shape
+    std::cout << "\nNew highest-priority shape:\n";
+    pq.view()->display();
+
+    return 0;
+}
