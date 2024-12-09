@@ -296,23 +296,23 @@ int main() {
     pq.add(new Cuboid(0, 0, 0, 3, 3, 3));     // Cuboid with dimensions 3x3x3
 
     // Browse all objects
-    std::cout << "All shapes in the priority queue:\n";
+    cout << "All shapes in the priority queue:\n";
     pq.browse();
 
     // View the highest-priority shape
-    std::cout << "\nHighest-priority shape:\n";
+    cout << "\nHighest-priority shape:\n";
     pq.view()->display();
 
     // Delete the highest-priority shape
-    std::cout << "\nDeleting the highest-priority shape...\n";
+    cout << "\nDeleting the highest-priority shape...\n";
     pq.deleteT();
 
     // Browse all objects again
-    std::cout << "\nAfter deleting the highest-priority shape:\n";
+    cout << "\nAfter deleting the highest-priority shape:\n";
     pq.browse();
 
     // View the new highest-priority shape
-    std::cout << "\nNew highest-priority shape:\n";
+    cout << "\nNew highest-priority shape:\n";
     pq.view()->display();
 
     return 0;
