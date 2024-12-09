@@ -4,7 +4,6 @@
 #include <vector>
 #include <algorithm>
 using namespace std;
-
 // Abstract base class representing a general Shape
 // Provides a common interface for all 2D and 3D shapes
 class Shape {
