@@ -183,6 +183,88 @@ public:
         return 4 * M_PI * pow(radius, 2); // Surface area of sphere = 4πr²
     }
 };
+// Cuboid class: A 3D shape with length, width, and height
+class Cuboid : public Shape {
+private:
+    double length, width, height;
+
+public:
+    Cuboid(double x = 0, double y = 0, double z = 0, double length = 0, double width = 0, double height = 0) {
+        ShapeType = "3D_Cuboid";
+        coordinates = {x, y, z};
+        this->length = length;
+        this->width = width;
+        this->height = height;
+    }
+
+    ~Cuboid() {
+        cout << "Destroying Cuboid" << endl;
+    }
+
+    void display() override {
+        cout << "Shape type: " << ShapeType << " with corner at (" << coordinates[0]
+             << "," << coordinates[1] << "," << coordinates[2]
+             << ") and dimensions (length, width, height): (" << length
+             << ", " << width << ", " << height << ")" << endl;
+    }
+
+    double area() override {
+        return 0; // Cuboid doesn't have a 2D area
+    }
+
+    double volume() override {
+        return length * width * height; // Volume of cuboid = l * w * h
+    }
+
+    double perimeter() override {
+        return 0; // Cuboid has no perimeter
+    }
+
+    double surfaceArea() override {
+        return 2 * (length * width + width * height + height * length); // Surface area = 2(lw + wh + hl)
+    }
+};
+
+// Cylinder class: A 3D shape with a radius and height
+class Cylinder : public Shape {
+private:
+    double radius, height;
+
+public:
+    Cylinder(double x = 0, double y = 0, double z = 0, double radius = 0, double height = 0) {
+        ShapeType = "3D_Cylinder";
+        coordinates = {x, y, z};
+        this->radius = radius;
+        this->height = height;
+    }
+
+    ~Cylinder() {
+        cout << "Destroying Cylinder" << endl;
+    }
+
+    void display() override {
+        cout << "Shape type: " << ShapeType << " with center at (" << coordinates[0]
+             << "," << coordinates[1] << "," << coordinates[2]
+             << "), radius: " << radius << " and height: " << height << endl;
+    }
+
+    double area() override {
+        return 0; // Cylinder doesn't have a 2D area
+    }
+
+    double volume() override {
+        return M_PI * pow(radius, 2) * height; // Volume of cylinder = πr²h
+    }
+
+    double perimeter() override {
+        return 0; // Cylinder has no perimeter
+    }
+
+    double surfaceArea() override {
+        return 2 * M_PI * radius * (radius + height); // Surface area = 2πr(r + h)
+    }
+};
+
 
 // Priority queue template class
 // Manages the shapes based on their volume in a max-heap
